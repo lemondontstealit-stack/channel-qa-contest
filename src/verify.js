@@ -53,6 +53,26 @@ function check(name, cond, detail) {
   else { fail++; console.log('FAIL ' + name + (detail ? ' :: ' + detail : '')); }
 }
 
+// 参赛复制版使用“完整回答模式”，不再验证原版的逐级菜单与精简回答。
+if (code.includes('参赛复制版：取消“精简回答/逐步追问”限制')) {
+  let cr = ask('我要开户');
+  check('参赛版 开户→直接完整回答', cr.includes('户头类型介绍') && cr.includes('附件10') && !cr.includes('请选择开户类型'), cr.slice(0, 200));
+  reset();
+  cr = ask('库存怎么调平');
+  check('参赛版 库存→直接完整回答', cr.includes('库存调平') && cr.includes('虚拟终端') && cr.includes('库存周转计算') && !cr.includes('请选择'), cr.slice(0, 200));
+  reset();
+  cr = ask('怎么修改经销商组织信息');
+  check('参赛版 变更→直接完整回答', cr.includes('营销组织') && cr.includes('下单组织') && !cr.includes('请输入编号'), cr.slice(0, 200));
+  reset();
+  cr = ask('开户入口在哪');
+  check('参赛版 入口→保留链接直达', cr.includes('distributor_open_list'), cr.slice(0, 200));
+  reset();
+  cr = ask('附件3');
+  check('参赛版 附件→保留精确检索', cr.includes('老板身份证') && cr.includes('法人身份证'), cr.slice(0, 200));
+  console.log('\n参赛版验证完成：' + pass + ' 通过，' + fail + ' 失败');
+  process.exit(fail ? 1 : 0);
+}
+
 // 1. 附件数字：附件9 必须命中附件库（严禁匹配流程条目）
 let r = ask('附件9');
 check('附件9→附件库', r.includes('实际经营人情况说明'), r.slice(0, 120));
