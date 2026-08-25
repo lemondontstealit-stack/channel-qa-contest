@@ -43,7 +43,19 @@ button:focus-visible,input:focus-visible,.cv:focus-visible,#quick span:focus-vis
 #quick::-webkit-scrollbar{display:none}
 #quick span{background:#fff;color:#4f5662;border:1px solid #e2e5e9;padding:6px 11px;border-radius:7px;font-size:11px;cursor:pointer;white-space:nowrap;transition:.18s ease}
 #quick span:hover{background:#fff5f5;color:var(--brand);border-color:#e8b5b9;transform:translateY(-1px)}
-#msgs{flex:1;overflow-y:auto;padding:28px clamp(24px,5vw,72px) 36px;scroll-behavior:smooth;background:radial-gradient(circle at 55% 0%,#fff 0,#f7f8fa 36%,var(--canvas) 72%)}
+#chat{flex:1;min-height:0;position:relative;overflow:hidden}
+#msgs{height:100%;overflow-y:auto;padding:28px clamp(42px,5vw,72px) 36px clamp(24px,5vw,72px);scroll-behavior:smooth;scrollbar-width:none;background:radial-gradient(circle at 55% 0%,#fff 0,#f7f8fa 36%,var(--canvas) 72%);overflow-anchor:none}
+#msgs::-webkit-scrollbar{display:none}
+#qnav{position:absolute;z-index:12;right:9px;top:22px;bottom:22px;width:34px;display:none;align-items:stretch;justify-content:center;padding:5px 0;pointer-events:none}
+#qnav.show{display:flex}
+#qnav-list{width:100%;display:flex;flex-direction:column;justify-content:space-around;align-items:flex-end;min-height:0;pointer-events:auto}
+.qmark{position:relative;width:17px;height:8px;padding:0;border:0;border-top:3px solid #c9ced5;background:transparent;cursor:pointer;transition:width .18s,border-color .18s}
+.qmark:hover,.qmark:focus-visible{width:27px;border-color:#6d7480;outline:none}
+.qmark.on{width:30px;border-color:#242a33}
+.qtip{position:absolute;right:34px;top:50%;width:280px;padding:13px 15px;border:1px solid #e2e5e9;border-radius:11px;background:rgba(255,255,255,.97);box-shadow:0 10px 28px rgba(30,38,50,.14);color:#343942;text-align:left;opacity:0;visibility:hidden;transform:translate(8px,-50%);transition:.16s ease;pointer-events:none}
+.qtip strong{display:block;margin-bottom:5px;color:#252b34;font-size:13px;line-height:1.45}
+.qtip span{display:-webkit-box;overflow:hidden;color:#737b87;font-size:12px;line-height:1.6;-webkit-box-orient:vertical;-webkit-line-clamp:3}
+.qmark:hover .qtip,.qmark:focus-visible .qtip{opacity:1;visibility:visible;transform:translate(0,-50%)}
 .msg{width:100%;max-width:1000px;margin:0 auto 20px;font-size:15px;line-height:1.85}
 .msg.u{text-align:right}
 .msg.u div{background:var(--brand);color:#fff;display:inline-block;padding:11px 16px;border-radius:14px 14px 4px 14px;max-width:78%;text-align:left;font-size:15px;box-shadow:0 5px 14px rgba(189,32,44,.14)}
@@ -90,7 +102,12 @@ button:focus-visible,input:focus-visible,.cv:focus-visible,#quick span:focus-vis
   .quick-label{display:none}
   #quick{gap:6px}
   #quick span{padding:6px 10px;font-size:11px}
-  #msgs{padding:18px 12px 24px}
+  #msgs{padding:18px 38px 24px 12px}
+  #qnav{right:3px;top:14px;bottom:14px;width:30px}
+  .qmark{width:14px}
+  .qmark:hover,.qmark:focus-visible{width:21px}
+  .qmark.on{width:24px}
+  .qtip{right:27px;width:min(245px,calc(100vw - 62px));padding:11px 12px}
   .msg{font-size:14px;margin-bottom:15px}
   .msg.u div{max-width:90%;font-size:14px;padding:9px 13px}
   .msg.a{padding:15px 13px;border-radius:11px;font-size:14px}
@@ -126,7 +143,7 @@ button:focus-visible,input:focus-visible,.cv:focus-visible,#quick span:focus-vis
 </div><div id="app">
 <div id="head"><div class="head-main"><button id="mnb" aria-label="新建会话">＋</button><div><div class="head-title">渠道管理AI智能问答</div><div class="head-sub">系统问题 · 操作路径 · 业务解决方案</div></div></div><div class="head-status"><i></i>知识库已连接</div></div>
 <div id="quickbar"><div class="quick-label">常用业务</div><div id="quick"></div></div>
-<div id="msgs"><div class="empty-state"><div class="empty-icon">AI</div><h2>有什么系统问题？</h2><p>直接描述业务场景或系统报错，我会给出对应的操作路径和处理办法。</p><div class="empty-examples"><button onclick="document.getElementById('inp').value='如何给一批商开户？';send()">一批商如何开户？</button><button onclick="document.getElementById('inp').value='如何给二批商开户？';send()">二批商如何开户？</button><button onclick="document.getElementById('inp').value='库存怎么调平？';send()">库存怎么调平？</button></div></div></div>
+<div id="chat"><div id="msgs"><div class="empty-state"><div class="empty-icon">AI</div><h2>有什么系统问题？</h2><p>直接描述业务场景或系统报错，我会给出对应的操作路径和处理办法。</p><div class="empty-examples"><button onclick="document.getElementById('inp').value='如何给一批商开户？';send()">一批商如何开户？</button><button onclick="document.getElementById('inp').value='如何给二批商开户？';send()">二批商如何开户？</button><button onclick="document.getElementById('inp').value='库存怎么调平？';send()">库存怎么调平？</button></div></div></div><nav id="qnav" aria-label="本次会话问题定位"><div id="qnav-list"></div></nav></div>
 <div id="bot">
 <div class="composer"><input id="inp" aria-label="输入渠道管理问题" placeholder="输入问题，例如：如何给一批商开户？"><button id="btn">发送</button></div>
 <div class="bot-tip">请尽量说明业务对象、办理事项和当前遇到的问题</div>
@@ -549,11 +566,11 @@ if(!q)return;
 if(q!==_fzLast)_fzLast='';
 document.getElementById('inp').value='';
 // 用户消息
-am('u',q);
+var asked=am('u',q);
 var ms=document.getElementById('msgs');
 // 思考中
 var dt=document.createElement('div');dt.className='msg a';dt.innerHTML='思考中...';dt.id='think';ms.appendChild(dt);
-setTimeout(function(){ms.scrollTop=999999;},100);
+setTimeout(function(){focusQuestion(asked,false);},40);
 
 setTimeout(function(){
 var th=document.getElementById('think');if(th)th.remove();
@@ -978,17 +995,24 @@ var qb=document.getElementById('quick');
 
 var CVS=JSON.parse(localStorage.getItem("qa_cvs")||"[]");
 var CID=null;
+var PENDING_Q=null;
+var QNAV_RAF=0;
 var EMPTY_HTML='<div class="empty-state"><div class="empty-icon">AI</div><h2>有什么系统问题？</h2><p>直接描述业务场景或系统报错，我会给出对应的操作路径和处理办法。</p><div class="empty-examples"><button onclick="document.getElementById(\'inp\').value=\'如何给一批商开户？\';send()">一批商如何开户？</button><button onclick="document.getElementById(\'inp\').value=\'如何给二批商开户？\';send()">二批商如何开户？</button><button onclick="document.getElementById(\'inp\').value=\'库存怎么调平？\';send()">库存怎么调平？</button></div></div>';
+function userQuestions(){if(!document.querySelectorAll)return[];return Array.prototype.slice.call(document.querySelectorAll('#msgs .msg.u'));}
+function focusQuestion(el,smooth){if(!el)return;var ms=document.getElementById('msgs');var top=Math.max(0,el.offsetTop-16);if(ms.scrollTo)ms.scrollTo({top:top,behavior:smooth?'smooth':'auto'});else ms.scrollTop=top;setTimeout(updateQuestionNav,30);}
+function updateQuestionNav(){if(!document.querySelectorAll)return;var ms=document.getElementById('msgs');var qs=userQuestions();var marks=document.querySelectorAll('#qnav-list .qmark');if(!qs.length||!marks.length)return;var probe=ms.scrollTop+70;var active=0;for(var i=0;i<qs.length;i++){if(qs[i].offsetTop<=probe)active=i;}for(var j=0;j<marks.length;j++)marks[j].classList.toggle('on',j===active);}
+function refreshQuestionNav(){var nav=document.getElementById('qnav');var list=document.getElementById('qnav-list');if(!nav||!list||!nav.classList)return;var qs=userQuestions();list.innerHTML='';nav.classList.toggle('show',qs.length>0);for(var i=0;i<qs.length;i++){(function(el,idx){var mark=document.createElement('button');mark.type='button';mark.className='qmark';mark.setAttribute('aria-label','定位到问题'+(idx+1)+'：'+el.textContent.trim());var tip=document.createElement('span');tip.className='qtip';var title=document.createElement('strong');title.textContent='问题 '+(idx+1);var copy=document.createElement('span');copy.textContent=el.textContent.trim();tip.appendChild(title);tip.appendChild(copy);mark.appendChild(tip);mark.onclick=function(){focusQuestion(el,true);};list.appendChild(mark);})(qs[i],i);}updateQuestionNav();}
 function sc(){localStorage.setItem("qa_cvs",JSON.stringify(CVS));}
 function nc(){var c={id:"c"+Date.now(),title:"新会话",msgs:[],tm:new Date().toISOString()};CVS.unshift(c);sc();sw(c.id);rc();}
-function sw(id){CID=id;var c=CVS.find(function(x){return x.id===id});if(!c)return;document.getElementById("msgs").innerHTML="";if(c.msgs.length===0)document.getElementById("msgs").innerHTML=EMPTY_HTML;else for(var i=0;i<c.msgs.length;i++)am(c.msgs[i].t,c.msgs[i].c,true);rc();}
+function sw(id){CID=id;PENDING_Q=null;var c=CVS.find(function(x){return x.id===id});if(!c)return;document.getElementById("msgs").innerHTML="";if(c.msgs.length===0)document.getElementById("msgs").innerHTML=EMPTY_HTML;else for(var i=0;i<c.msgs.length;i++)am(c.msgs[i].t,c.msgs[i].c,true);refreshQuestionNav();var qs=userQuestions();if(qs.length)setTimeout(function(){focusQuestion(qs[qs.length-1],false);},80);rc();}
 function dc(id){if(!confirm('确认删除该会话吗？删除后无法恢复。'))return;CVS=CVS.filter(function(c){return c.id!==id});sc();if(CID===id){CID=CVS.length?CVS[0].id:null;CID?sw(CID):nc();}rc();} function rc(){var l=document.getElementById("cl");l.innerHTML=CVS.map(function(c){var on=c.id===CID?" on":"";var t=c.title||"新会话";var d=new Date(c.tm).toLocaleDateString("zh-CN",{month:"short",day:"numeric"});return "<div class=\"cv"+on+"\" onclick=\"sw('"+c.id+"')\"><div>"+esc(t)+"<br><small>"+d+" "+c.msgs.length+"条</small></div><span class=\"x\" onclick=\"event.stopPropagation();dc('"+c.id+"')\">&times;</span></div>";}).join("");}
 var LASTQ='';
 function av(t,c){var cv=CVS.find(function(x){return x.id===CID});if(!cv)return;cv.msgs.push({t:t,c:c,tm:new Date().toISOString()});if(cv.title==="新会话"&&cv.msgs.length===1&&t==="u"){cv.title=c.substring(0,25);}if(t==="u"){LASTQ=c;}else{try{var lg=JSON.parse(localStorage.getItem("qa_log")||"[]");lg.push({q:LASTQ,fb:c.indexOf("暂不在渠道管理指南范围内")>=0,ts:new Date().toISOString()});if(lg.length>300)lg=lg.slice(-300);localStorage.setItem("qa_log",JSON.stringify(lg));}catch(e){}}sc();rc();}
-function am(t,c,nosave){var ms=document.getElementById("msgs");var d=document.createElement("div");d.className="msg "+(t==="u"?"u":"a");d.innerHTML=t==="u"?"<div>"+esc(c)+"</div>":c;ms.appendChild(d);setTimeout(function(){ms.scrollTop=999999;},100);if(!nosave)av(t,c);}
+function am(t,c,nosave){var ms=document.getElementById("msgs");var d=document.createElement("div");d.className="msg "+(t==="u"?"u":"a");d.innerHTML=t==="u"?"<div>"+esc(c)+"</div>":c;ms.appendChild(d);if(!nosave&&t==="u"){PENDING_Q=d;refreshQuestionNav();setTimeout(function(){focusQuestion(d,false);},30);}else if(!nosave&&t==="a"&&PENDING_Q){var anchor=PENDING_Q;PENDING_Q=null;setTimeout(function(){focusQuestion(anchor,false);},60);}if(!nosave)av(t,c);return d;}
 if(CVS.length===0)nc();else sw(CVS[0].id);
 document.getElementById("nb").onclick=nc;
 document.getElementById("mnb").onclick=nc;
+var MSGBOX=document.getElementById("msgs");if(MSGBOX.addEventListener)MSGBOX.addEventListener('scroll',function(){if(QNAV_RAF)return;QNAV_RAF=requestAnimationFrame(function(){QNAV_RAF=0;updateQuestionNav();});});
 for(var i=0;i<qs.length;i++){(function(q){
 var s=document.createElement('span');s.textContent=q[0];s.onclick=function(){document.getElementById('inp').value=q[1];send();};qb.appendChild(s);
 })(qs[i]);}
