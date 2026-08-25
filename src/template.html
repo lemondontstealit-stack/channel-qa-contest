@@ -151,8 +151,8 @@ button:focus-visible,input:focus-visible,.cv:focus-visible,#quick span:focus-vis
 </div>
 </div>
 <script>
-// ===== 简单的图片查找 =====
-function gi(n){var b=n.replace(/\.(png|jpeg|jpg)$/,'');var e=document.getElementById('i-'+b);return e?e.src:'';}
+// ===== 图片地址：直接读取网站图片文件，避免部分电脑加载大页面时图片索引尚未就绪 =====
+function gi(n){return 'kb/images/'+encodeURIComponent(n);}
 
 // ===== 自动链接 =====
 function al(t){if(t.indexOf('<a ')>=0)return t;return t.replace(/(https?:\/\/[^\s，。,<>]+)/g,'<a href="$1" target="_blank" style="color:#c41e2a">$1</a>');}
@@ -999,7 +999,7 @@ var CID=null;
 var PENDING_Q=null;
 var QNAV_RAF=0;
 var EMPTY_HTML='<div class="empty-state"><div class="empty-icon">AI</div><h2>有什么系统问题？</h2><p>直接描述业务场景或系统报错，我会给出对应的操作路径和处理办法。</p><div class="empty-examples"><button onclick="document.getElementById(\'inp\').value=\'如何给一批商开户？\';send()">一批商如何开户？</button><button onclick="document.getElementById(\'inp\').value=\'如何给二批商开户？\';send()">二批商如何开户？</button><button onclick="document.getElementById(\'inp\').value=\'库存怎么调平？\';send()">库存怎么调平？</button></div></div>';
-function restoreSavedImageTokens(h){if(typeof h!=='string'||h.indexOf('__KBIMG_')<0)return h;return h.replace(/src="__KBIMG_([^_]+)__"/g,function(all,id){var img=document.getElementById('i-'+id);return img?'src="'+img.src+'"':all;});}
+function restoreSavedImageTokens(h){if(typeof h!=='string'||h.indexOf('__KBIMG_')<0)return h;return h.replace(/src="__KBIMG_([^_]+)__"/g,function(all,id){var safe=encodeURIComponent(id);return 'src="kb/images/'+safe+'.png" onerror="if(!this.dataset.imgRetry){this.dataset.imgRetry=1;this.src=\'kb/images/'+safe+'.jpeg\'}"';});}
 function userQuestions(){if(!document.querySelectorAll)return[];return Array.prototype.slice.call(document.querySelectorAll('#msgs .msg.u'));}
 function focusQuestion(el,smooth){if(!el)return;var ms=document.getElementById('msgs');var top=Math.max(0,el.offsetTop-16);if(ms.scrollTo)ms.scrollTo({top:top,behavior:smooth?'smooth':'auto'});else ms.scrollTop=top;setTimeout(updateQuestionNav,30);}
 function updateQuestionNav(){if(!document.querySelectorAll)return;var ms=document.getElementById('msgs');var qs=userQuestions();var marks=document.querySelectorAll('#qnav-list .qmark');if(!qs.length||!marks.length)return;var probe=ms.scrollTop+70;var active=0;for(var i=0;i<qs.length;i++){if(qs[i].offsetTop<=probe)active=i;}for(var j=0;j<marks.length;j++)marks[j].classList.toggle('on',j===active);}
