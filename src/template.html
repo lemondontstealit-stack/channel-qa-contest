@@ -151,8 +151,10 @@ button:focus-visible,input:focus-visible,.cv:focus-visible,#quick span:focus-vis
 </div>
 </div>
 <script>
-// ===== 图片地址：直接读取网站图片文件，避免部分电脑加载大页面时图片索引尚未就绪 =====
-function gi(n){return 'kb/images/'+encodeURIComponent(n);}
+// ===== 图片地址：网页默认读取轻量 WebP；原图保留作异常回退 =====
+function gf(n){return 'kb/images/'+encodeURIComponent(n);}
+function gi(n){var b=String(n||'').replace(/^.*[\\/]/,'').replace(/\.[^.]+$/,'');return 'kb/web_images/'+encodeURIComponent(b)+'.webp';}
+function ig(n,a){if(!n)return'';return '<img loading="lazy" decoding="async" src="'+gi(n)+'" data-original="'+gf(n)+'" alt="'+esc(a||'操作截图')+'" onerror="if(!this.dataset.imgRetry){this.dataset.imgRetry=1;this.src=this.dataset.original}" onclick="this.requestFullscreen?this.requestFullscreen():(document.body.requestFullscreen&&document.body.requestFullscreen())" class="guide-screenshot">';}
 
 // ===== 自动链接 =====
 function al(t){if(t.indexOf('<a ')>=0)return t;return t.replace(/(https?:\/\/[^\s，。,<>]+)/g,'<a href="$1" target="_blank" style="color:#c41e2a">$1</a>');}
@@ -525,9 +527,7 @@ var s=e.s[i];if(s.title)h+='<div class="step"><h4>'+ctd(s.title)+'</h4>';else h+
 var srcs=[];
 if(s.img)srcs.push(s.img);
 if(s.imgs)srcs=srcs.concat(s.imgs);
-for(var si=0;si<srcs.length;si++){
-var src=gi(srcs[si]);if(src)h+='<img src="'+src+'" alt="'+s.title+'" onclick="this.requestFullscreen?this.requestFullscreen():(document.body.requestFullscreen&&document.body.requestFullscreen())" class="guide-screenshot">';
-}
+for(var si=0;si<srcs.length;si++)h+=ig(srcs[si],s.title);
 if(s.an){h+='<div class="an">';for(var j=0;j<s.an.length;j++)h+='<div class="'+s.an[j].c+'">'+s.an[j].t+'</div>';h+='</div>';}
 if(s.tx)h+='<div class="tx">'+s.tx+'</div>';
 if(s.w)h+='<div class="warn">'+s.w+'</div>';
@@ -542,7 +542,7 @@ function re(ent){
 if(!ent||!K[ent.c]||!ent.s||!ent.s.length)return null;
 var h='';
 for(var x=0;x<ent.s.length;x++){var sec=K[ent.c].s[ent.s[x]];if(!sec)continue;var tt=sec.title?(ent.c==='合同'?cth(sec.title):ctd(sec.title)):'';
-h+='<div class="step">';if(sec.title)h+='<h4>'+tt+'</h4>';if(sec.img||sec.imgs){var srcs=[];if(sec.img)srcs.push(sec.img);if(sec.imgs)srcs=srcs.concat(sec.imgs);for(var si=0;si<srcs.length;si++){var src=gi(srcs[si]);if(src)h+='<img src="'+src+'" alt="'+tt+'" onclick="this.requestFullscreen?this.requestFullscreen():(document.body.requestFullscreen&&document.body.requestFullscreen())" class="guide-screenshot">';}}if(sec.tx)h+='<div class="tx">'+sec.tx+'</div>';if(sec.w)h+='<div class="warn">'+sec.w+'</div>';h+='</div>';}
+h+='<div class="step">';if(sec.title)h+='<h4>'+tt+'</h4>';if(sec.img||sec.imgs){var srcs=[];if(sec.img)srcs.push(sec.img);if(sec.imgs)srcs=srcs.concat(sec.imgs);for(var si=0;si<srcs.length;si++)h+=ig(srcs[si],tt);}if(sec.tx)h+='<div class="tx">'+sec.tx+'</div>';if(sec.w)h+='<div class="warn">'+sec.w+'</div>';h+='</div>';}
 if(ent.c==='合同'){
 if(ent.s.length===1&&ent.s[0]>=4&&ent.s[0]<=8){var c2=cut26(h,ent.s[0]-4);if(c2===null)return null;h=c2;}
 if(hasNav(h))return null;
@@ -599,12 +599,12 @@ var attM=/附件\s*(\d+)/.exec(q);var attMC=/附件\s*([一二三四五六七八
 if((attM||attMC)&&!q.match(/附件填写|附件上传|附件总|附件要求/)){
 var an=null;if(attM){an=parseInt(attM[1]);}else if(attMC){var cn={一:1,二:2,三:3,四:4,五:5,六:6,七:7,八:8,九:9,十:10};var cnStr=attMC[1];if(cnStr.length===1){an=cn[cnStr];}else if(cnStr==='十'){an=10;}else{an=10+(cn[cnStr[1]]||0);}}var atf=null;
 for(var x=0;x<ATT.length;x++){if(ATT[x].n===an){atf=ATT[x];break;}}
-if(atf&&K[atf.c]){_lc='开户';var aeh='<h3 style="color:#c41e2a">'+ct(K[atf.c].t)+' — '+atf.na+'</h3>';for(var x=0;x<atf.s.length;x++){var sidx=atf.s[x];var sec=K[atf.c].s[sidx];if(!sec)continue;aeh+='<div class="step">';if(sec.title)aeh+='<h4>'+cti(sec.title)+'</h4>';if(sec.img||sec.imgs){var srcs=[];if(sec.img)srcs.push(sec.img);if(sec.imgs)srcs=srcs.concat(sec.imgs);for(var si=0;si<srcs.length;si++){var src=gi(srcs[si]);if(src)aeh+='<img src="'+src+'" alt="'+cti(sec.title||'')+'" onclick="this.requestFullscreen?this.requestFullscreen():(document.body.requestFullscreen&&document.body.requestFullscreen())" class="guide-screenshot">';}}if(sec.tx)aeh+='<div class="tx">'+sec.tx+'</div>';if(sec.w)aeh+='<div class="warn">'+sec.w+'</div>';aeh+='</div>';}aeh+='<div style="margin-top:12px;color:#888;font-size:14px">需要查看其他附件吗？输入「附件N」或附件名即可</div>'+cnt(q,atf.na);if(redHits.length>0){for(var rx=0;rx<redHits.length;rx++)aeh+='<div style="background:#fff0f0;border-left:3px solid #c41e2a;padding:10px 14px;margin:8px 0;font-size:14px">'+redHits[rx]+'</div>';}am('a',aeh);return;}
+if(atf&&K[atf.c]){_lc='开户';var aeh='<h3 style="color:#c41e2a">'+ct(K[atf.c].t)+' — '+atf.na+'</h3>';for(var x=0;x<atf.s.length;x++){var sidx=atf.s[x];var sec=K[atf.c].s[sidx];if(!sec)continue;aeh+='<div class="step">';if(sec.title)aeh+='<h4>'+cti(sec.title)+'</h4>';if(sec.img||sec.imgs){var srcs=[];if(sec.img)srcs.push(sec.img);if(sec.imgs)srcs=srcs.concat(sec.imgs);for(var si=0;si<srcs.length;si++)aeh+=ig(srcs[si],cti(sec.title||''));}if(sec.tx)aeh+='<div class="tx">'+sec.tx+'</div>';if(sec.w)aeh+='<div class="warn">'+sec.w+'</div>';aeh+='</div>';}aeh+='<div style="margin-top:12px;color:#888;font-size:14px">需要查看其他附件吗？输入「附件N」或附件名即可</div>'+cnt(q,atf.na);if(redHits.length>0){for(var rx=0;rx<redHits.length;rx++)aeh+='<div style="background:#fff0f0;border-left:3px solid #c41e2a;padding:10px 14px;margin:8px 0;font-size:14px">'+redHits[rx]+'</div>';}am('a',aeh);return;}
 am('a','未找到附件'+an+'。附件范围：附件1-附件10（输入「附件N」查询）');return;
 }
 // 附件碎片关键词：短词直接匹配附件
 if(!_tp&&!_bz&&!_gd&&q.length<=6){var atf2=null;for(var x=0;x<ATT.length;x++){var kw2=ATT[x].kw||[];for(var z=0;z<kw2.length;z++){if(q.indexOf(kw2[z])>=0){atf2=ATT[x];break;}}if(atf2)break;}
-if(atf2&&K[atf2.c]){_lc='开户';var aeh2='<h3 style="color:#c41e2a">'+ct(K[atf2.c].t)+' — '+atf2.na+'</h3>';for(var x=0;x<atf2.s.length;x++){var sidx=atf2.s[x];var sec=K[atf2.c].s[sidx];if(!sec)continue;aeh2+='<div class="step">';if(sec.title)aeh2+='<h4>'+cti(sec.title)+'</h4>';if(sec.img||sec.imgs){var srcs=[];if(sec.img)srcs.push(sec.img);if(sec.imgs)srcs=srcs.concat(sec.imgs);for(var si=0;si<srcs.length;si++){var src=gi(srcs[si]);if(src)aeh2+='<img src="'+src+'" alt="'+cti(sec.title||'')+'" onclick="this.requestFullscreen?this.requestFullscreen():(document.body.requestFullscreen&&document.body.requestFullscreen())" class="guide-screenshot">';}}if(sec.tx)aeh2+='<div class="tx">'+sec.tx+'</div>';if(sec.w)aeh2+='<div class="warn">'+sec.w+'</div>';aeh2+='</div>';}aeh2+='<div style="margin-top:12px;color:#888;font-size:14px">需要查看其他附件吗？输入「附件N」或附件名即可</div>'+cnt(q,atf2.na);if(redHits.length>0){for(var rx=0;rx<redHits.length;rx++)aeh2+='<div style="background:#fff0f0;border-left:3px solid #c41e2a;padding:10px 14px;margin:8px 0;font-size:14px">'+redHits[rx]+'</div>';}am('a',aeh2);return;}}
+if(atf2&&K[atf2.c]){_lc='开户';var aeh2='<h3 style="color:#c41e2a">'+ct(K[atf2.c].t)+' — '+atf2.na+'</h3>';for(var x=0;x<atf2.s.length;x++){var sidx=atf2.s[x];var sec=K[atf2.c].s[sidx];if(!sec)continue;aeh2+='<div class="step">';if(sec.title)aeh2+='<h4>'+cti(sec.title)+'</h4>';if(sec.img||sec.imgs){var srcs=[];if(sec.img)srcs.push(sec.img);if(sec.imgs)srcs=srcs.concat(sec.imgs);for(var si=0;si<srcs.length;si++)aeh2+=ig(srcs[si],cti(sec.title||''));}if(sec.tx)aeh2+='<div class="tx">'+sec.tx+'</div>';if(sec.w)aeh2+='<div class="warn">'+sec.w+'</div>';aeh2+='</div>';}aeh2+='<div style="margin-top:12px;color:#888;font-size:14px">需要查看其他附件吗？输入「附件N」或附件名即可</div>'+cnt(q,atf2.na);if(redHits.length>0){for(var rx=0;rx<redHits.length;rx++)aeh2+='<div style="background:#fff0f0;border-left:3px solid #c41e2a;padding:10px 14px;margin:8px 0;font-size:14px">'+redHits[rx]+'</div>';}am('a',aeh2);return;}}
 // 【分组内编号】组菜单编号从1开始：纯数字/多编号点名按组内顺序定位条目，退出分组后恢复全局编号
 if(_gp){
 var gq2=q.replace(/[，。！？!?\s]+$/,'');
@@ -628,7 +628,7 @@ if(_ab){
 var gq3=q.replace(/[，。！？!?\s]+$/,'');
 if(/^\d+$/.test(gq3)){
 var an3=parseInt(gq3);
-if(an3===0){_ab=null;var ah='<h3 style="color:#c41e2a">'+K['开户'].t+' — 全部附件</h3>';for(var x=0;x<ATT.length;x++){var asec=K['开户'].s[ATT[x].s[0]];if(!asec)continue;ah+='<div class="step">';if(asec.title)ah+='<h4>'+cti(asec.title)+'</h4>';if(asec.img||asec.imgs){var srcs=[];if(asec.img)srcs.push(asec.img);if(asec.imgs)srcs=srcs.concat(asec.imgs);for(var si=0;si<srcs.length;si++){var src=gi(srcs[si]);if(src)ah+='<img src="'+src+'" alt="'+cti(asec.title||'')+'" onclick="this.requestFullscreen?this.requestFullscreen():(document.body.requestFullscreen&&document.body.requestFullscreen())" class="guide-screenshot">';}}if(asec.tx)ah+='<div class="tx">'+asec.tx+'</div>';if(asec.w)ah+='<div class="warn">'+asec.w+'</div>';ah+='</div>';}ah+='<div style="margin-top:12px;font-size:14px;color:#888">以上为附件1-附件10全部内容，输入新问题继续</div>'+cnt('附件','开户');am('a',ah);return;}
+if(an3===0){_ab=null;var ah='<h3 style="color:#c41e2a">'+K['开户'].t+' — 全部附件</h3>';for(var x=0;x<ATT.length;x++){var asec=K['开户'].s[ATT[x].s[0]];if(!asec)continue;ah+='<div class="step">';if(asec.title)ah+='<h4>'+cti(asec.title)+'</h4>';if(asec.img||asec.imgs){var srcs=[];if(asec.img)srcs.push(asec.img);if(asec.imgs)srcs=srcs.concat(asec.imgs);for(var si=0;si<srcs.length;si++)ah+=ig(srcs[si],cti(asec.title||''));}if(asec.tx)ah+='<div class="tx">'+asec.tx+'</div>';if(asec.w)ah+='<div class="warn">'+asec.w+'</div>';ah+='</div>';}ah+='<div style="margin-top:12px;font-size:14px;color:#888">以上为附件1-附件10全部内容，输入新问题继续</div>'+cnt('附件','开户');am('a',ah);return;}
 if(an3>=1&&an3<=10){_ab=null;var inp3=document.getElementById('inp');inp3.value='附件'+an3;setTimeout(function(){send();},50);return;}
 am('a','请输入有效编号（1-10，输入0查看全部附件），或输入新问题重新搜索');return;
 }
@@ -778,7 +778,7 @@ if(K[gk]){
   else if(typeof _gd==='string'&&n>=1&&n<=K[gk].s.length){sel=n-1;}
   else if(/^\d+$/.test(q)){am('a','请输入有效编号（1-'+K[gk].s.length+'，输入0查看全部完整内容），或输入新问题重新搜索');return;}
   else{for(var i=0;i<K[gk].s.length;i++){var st=K[gk].s[i].title||'';if(st.indexOf(q)>=0){sel=i;break;}}}
-  if(sel!==null){var ss=K[gk].s[sel];var h='<h3 style="color:#c41e2a">'+ct(K[gk].t)+'</h3><div class="step">';if(ss.title)h+='<h4>'+(sel+1)+'. '+cti(ss.title)+'</h4>';if(ss.img||ss.imgs){var srcs=[];if(ss.img)srcs.push(ss.img);if(ss.imgs)srcs=srcs.concat(ss.imgs);for(var si=0;si<srcs.length;si++){var src=gi(srcs[si]);if(src)h+='<img src="'+src+'" alt="'+cti(ss.title||'')+'" onclick="this.requestFullscreen?this.requestFullscreen():(document.body.requestFullscreen&&document.body.requestFullscreen())" class="guide-screenshot">';}}if(ss.tx)h+='<div class="tx">'+ss.tx+'</div>';if(ss.w)h+='<div class="warn">'+ss.w+'</div>';h+='</div><div style="margin-top:12px;color:#888;font-size:14px">输入其他编号继续查看，或输入新问题返回搜索模式</div>';am('a',h);return;}
+  if(sel!==null){var ss=K[gk].s[sel];var h='<h3 style="color:#c41e2a">'+ct(K[gk].t)+'</h3><div class="step">';if(ss.title)h+='<h4>'+(sel+1)+'. '+cti(ss.title)+'</h4>';if(ss.img||ss.imgs){var srcs=[];if(ss.img)srcs.push(ss.img);if(ss.imgs)srcs=srcs.concat(ss.imgs);for(var si=0;si<srcs.length;si++)h+=ig(srcs[si],cti(ss.title||''));}if(ss.tx)h+='<div class="tx">'+ss.tx+'</div>';if(ss.w)h+='<div class="warn">'+ss.w+'</div>';h+='</div><div style="margin-top:12px;color:#888;font-size:14px">输入其他编号继续查看，或输入新问题返回搜索模式</div>';am('a',h);return;}
   _gd=null;
 }
 }
@@ -999,7 +999,7 @@ var CID=null;
 var PENDING_Q=null;
 var QNAV_RAF=0;
 var EMPTY_HTML='<div class="empty-state"><div class="empty-icon">AI</div><h2>有什么系统问题？</h2><p>直接描述业务场景或系统报错，我会给出对应的操作路径和处理办法。</p><div class="empty-examples"><button onclick="document.getElementById(\'inp\').value=\'如何给一批商开户？\';send()">一批商如何开户？</button><button onclick="document.getElementById(\'inp\').value=\'如何给二批商开户？\';send()">二批商如何开户？</button><button onclick="document.getElementById(\'inp\').value=\'库存怎么调平？\';send()">库存怎么调平？</button></div></div>';
-function restoreSavedImageTokens(h){if(typeof h!=='string'||h.indexOf('__KBIMG_')<0)return h;return h.replace(/src="__KBIMG_([^_]+)__"/g,function(all,id){var safe=encodeURIComponent(id);return 'src="kb/images/'+safe+'.png" onerror="if(!this.dataset.imgRetry){this.dataset.imgRetry=1;this.src=\'kb/images/'+safe+'.jpeg\'}"';});}
+function restoreSavedImageTokens(h){if(typeof h!=='string'||h.indexOf('__KBIMG_')<0)return h;return h.replace(/src="__KBIMG_([^_]+)__"/g,function(all,id){var safe=encodeURIComponent(id);return 'loading="lazy" decoding="async" src="kb/web_images/'+safe+'.webp" data-original="kb/images/'+safe+'.png" onerror="if(!this.dataset.imgRetry){this.dataset.imgRetry=1;this.src=this.dataset.original}"';});}
 function userQuestions(){if(!document.querySelectorAll)return[];return Array.prototype.slice.call(document.querySelectorAll('#msgs .msg.u'));}
 function focusQuestion(el,smooth){if(!el)return;var ms=document.getElementById('msgs');var top=Math.max(0,el.offsetTop-16);if(ms.scrollTo)ms.scrollTo({top:top,behavior:smooth?'smooth':'auto'});else ms.scrollTop=top;setTimeout(updateQuestionNav,30);}
 function updateQuestionNav(){if(!document.querySelectorAll)return;var ms=document.getElementById('msgs');var qs=userQuestions();var marks=document.querySelectorAll('#qnav-list .qmark');if(!qs.length||!marks.length)return;var probe=ms.scrollTop+70;var active=0;for(var i=0;i<qs.length;i++){if(qs[i].offsetTop<=probe)active=i;}for(var j=0;j<marks.length;j++)marks[j].classList.toggle('on',j===active);}
