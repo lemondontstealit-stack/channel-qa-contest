@@ -72,10 +72,10 @@ for fn in sorted(all_imgs):
     try:
         img = Image.open(fp).convert('RGB')
         w, h = img.size
-        if w > 800:
-            img = img.resize((800, int(h * 800 / w)), Image.LANCZOS)
+        if w > 1600:
+            img = img.resize((1600, int(h * 1600 / w)), Image.LANCZOS)
         buf = io.BytesIO()
-        img.save(buf, format='JPEG', quality=45, optimize=True)
+        img.save(buf, format='JPEG', quality=80, optimize=True)
         encoded[fn] = base64.b64encode(buf.getvalue()).decode()
         total_size += len(buf.getvalue())
     except Exception as e:
