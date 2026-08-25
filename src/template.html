@@ -496,6 +496,17 @@ for(var sk in SYN){if(q.indexOf(sk)>=0)q=q.replace(sk,SYN[sk]);}
 // 合规红线检测
 var redHits=[];
 for(var ri=0;ri<RED.length;ri++){for(var rj=0;rj<RED[ri].k.length;rj++){if(q.indexOf(RED[ri].k[rj])>=0){redHits.push(RED[ri].m);break;}}}
+// 参赛复制版：取消“精简回答/逐步追问”限制。命中业务板块后，直接展示该板块的完整操作指引。
+if(/链接|网址|url|入口.*在哪/.test(q)&&!/怎么|流程|步骤/.test(q)){
+am('a',rl(q));return;
+}
+var fullKey=mq(q);
+if(fullKey&&K[fullKey]){
+_lc=fullKey;_gd=null;_bz=null;_tp=null;_gp=null;
+var fullHtml=ba(K[fullKey]);
+if(redHits.length>0){for(var frx=0;frx<redHits.length;frx++)fullHtml+='<div style="background:#fff0f0;border-left:3px solid #c41e2a;padding:10px 14px;margin:8px 0;font-size:14px">'+redHits[frx]+'</div>';}
+am('a',fullHtml);return;
+}
 // 【最高优先级】附件专属检索：附件X只查附件库
 var attM=/附件\s*(\d+)/.exec(q);var attMC=/附件\s*([一二三四五六七八九十]+)/.exec(q);
 if((attM||attMC)&&!q.match(/附件填写|附件上传|附件总|附件要求/)){
