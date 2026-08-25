@@ -21,6 +21,9 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(BASE)
 KB_FILE = os.path.join(ROOT, 'kb', 'kb.json')
 IMG_DIR = os.path.join(ROOT, 'kb', 'images')
+WEB_IMG_DIR = os.path.join(ROOT, 'kb', 'web_images')
+WEB_IMAGE_MAX_EDGE = 1800
+WEB_IMAGE_QUALITY = 82
 
 # ===== 1. 读取知识库 =====
 with open(KB_FILE, 'r', encoding='utf-8') as f:
@@ -52,9 +55,11 @@ def collect_images(obj, seen=None):
 all_imgs = collect_images(kb)
 print(f"Images: {len(all_imgs)} referenced")
 
-# ===== 4. 校验图片文件 =====
+# ===== 4. 校验原图并生成网页轻量图 =====
 validated = {}
 total_size = 0
+web_total_size = 0
+os.makedirs(WEB_IMG_DIR, exist_ok=True)
 
 for fn in sorted(all_imgs):
     fp = os.path.join(IMG_DIR, fn)
@@ -71,13 +76,21 @@ for fn in sorted(all_imgs):
 
     try:
         with Image.open(fp) as img:
-            img.verify()
+            img.load()
+            if img.mode not in ('RGB', 'RGBA'):
+                img = img.convert('RGBA' if 'transparency' in img.info else 'RGB')
+            img.thumbnail((WEB_IMAGE_MAX_EDGE, WEB_IMAGE_MAX_EDGE), Image.Resampling.LANCZOS)
+            web_name = os.path.splitext(os.path.basename(fn))[0] + '.webp'
+            web_fp = os.path.join(WEB_IMG_DIR, web_name)
+            img.save(web_fp, 'WEBP', quality=WEB_IMAGE_QUALITY, method=6)
         validated[fn] = fp
         total_size += os.path.getsize(fp)
+        web_total_size += os.path.getsize(web_fp)
     except Exception as e:
         print(f"  ERROR {fn}: {e}")
 
-print(f"Image assets: {total_size/1024/1024:.1f}MB ({len(validated)}/{len(all_imgs)} ok, loaded on demand)")
+print(f"Original images: {total_size/1024/1024:.1f}MB ({len(validated)}/{len(all_imgs)} ok)")
+print(f"Web images: {web_total_size/1024/1024:.1f}MB (WebP, max edge {WEB_IMAGE_MAX_EDGE}px, quality {WEB_IMAGE_QUALITY})")
 
 # ===== 6. 将 kb.json 转为 JS 对象字面量 =====
 def to_js(obj, indent=0):
