@@ -6,6 +6,7 @@ on:
       - 'kb/**'
       - 'src/template.html'
       - 'src/build.py'
+      - '.github/workflows/build.yml'
   workflow_dispatch:
 
 permissions:
@@ -40,10 +41,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [ -n "$(git status --porcelain index.html)" ]; then
-            git add index.html
-            git commit -m "自动构建 index.html [skip ci]"
+          if [ -n "$(git status --porcelain -- index.html kb/web_images)" ]; then
+            git add index.html kb/web_images
+            git commit -m "自动构建网页与轻量图片 [skip ci]"
             git push
           else
-            echo "index.html 无变化，无需提交"
+            echo "网页与轻量图片无变化，无需提交"
           fi
